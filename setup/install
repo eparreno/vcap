@@ -36,7 +36,8 @@ source ~/.bashrc
 echo "Installing dependencies"
 if [[ $PLATFORM == 'Linux' ]]; then
   sudo apt-get update
-  sudo apt-get -qqy install coreutils autoconf libtool curl git-core ruby bison build-essential zlib1g-dev libssl-dev libreadline5-dev
+  sudo apt-get -qqy install coreutils autoconf libtool curl git-core ruby bison build-essential zlib1g-dev libssl-dev libreadline5-dev \
+  openssl zlib1g libssl-dev libyaml-dev libxml2-dev libxslt-dev libc6-dev ncurses-dev automake libtool bison
 else
   echo "Sorry, we can't install dependencies for your system yet."
 fi
@@ -67,7 +68,7 @@ fi
 echo "Installing rvm"
 bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 source ~/.bashrc
-source ~/.profile
+source ~/.bash_profile
 rvm get head
 
 echo "Activate rvm"
@@ -84,9 +85,9 @@ rm $rvm_path/gemsets/default.gems
 rm $rvm_path/gemsets/global.gems
 
 echo "Installing various rubies"
+rvm install 1.8.7-p352
 rvm install 1.9.2-p180
 rvm --default 1.9.2-p180
-rvm install 1.8.7-p352
 
 # install only rake 0.8.7
 rvm use 1.8.7-p352

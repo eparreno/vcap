@@ -29,8 +29,8 @@ read -p "Enter the password you want to use for root mysql user: " MYSQL_PASS
 read -p "Enter the password you want to use for root postgresql user: " POSTGRESQL_PASS
 
 echo "Setting language variables"
-sudo /usr/sbin/locale-gen en_GB.UTF-8
-sudo /usr/sbin/update-locale LANG=en_UGB.UTF-8
+sudo /usr/sbin/locale-gen en_US.UTF-8
+sudo /usr/sbin/update-locale LANG=en_US.UTF-8
 source ~/.bashrc
 
 echo "Installing dependencies"

@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# Allow VCAP_REPO to be overriden for testing
+VCAP_REPO=${VCAP_REPO:-https://github.com/eparreno/vcap.git}
+
+export rvm_trust_rvmrcs_flag=1 # Trust all rmvrcs we find
+
+if [[ $OS != 'Linux' ]]; then
+    echo "Unknown System, cancelling setup"
+    exit 1
+fi
+
+echo ""
+echo '-----------------------------------------------------------'
+echo "($PLATFORM) One Click Installer for VMware's Cloud Application Platform!"
+echo '-----------------------------------------------------------'
+echo ""
+
+echo "Hopefully this will be the last time you type your password"
+sudo ls > /dev/null
+
+echo "Setting language variables"
+sudo /usr/sbin/locale-gen en_US.UTF-8
+sudo /usr/sbin/update-locale LANG=en_US.UTF-8
+source ~/.bashrc
+
+echo "Installing dependencies"
+sudo apt-get update
+sudo apt-get -qqy install coreutils autoconf libtool curl git-core ruby bison build-essential zlib1g-dev libssl-dev libreadline5-dev \
+openssl zlib1g libssl-dev libyaml-dev libxml2-dev libxslt-dev libc6-dev ncurses-dev automake libtool bison
+
+# Overide user-supplied mysql & postgresql passwords with random ones
+# if we know how to do it on this platform
+MYSQL_PASS="$(cat /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c10)"
+POSTGRESQL_PASS="$(cat /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c10)"
+
+echo "Patch around .bash_profile issue with RMV"
+if [ -f ~/.bashrc ]; then
+  if [ ! -f ~/.bash_profile ]; then
+    # rvm install is going to write into .bash_profile in this
+    # case and short circuit loading of .bashrc so we need to
+    # create a proper .bash_profile if its missing
+    echo "# This file is sourced by bash for login shells.  The following line" >> ~/.bash_profile
+    echo "# runs your .bashrc and is recommended by the bash info pages." >> ~/.bash_profile
+    echo "[[ -f ~/.bashrc ]] && . ~/.bashrc" >> ~/.bash_profile
+  fi
+fi
+
+echo "Installing RVM"
+bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+source ~/.bashrc
+source ~/.bash_profile
+rvm get head
+
+echo "Activate rvm"
+if [ "$(id -u)" != "0" ]; then
+  rvm_path="$HOME/.rvm"
+else
+  rvm_path="/usr/local/rvm"
+fi
+[[ -s "$rvm_path/scripts/rvm" ]] && source "$rvm_path/scripts/rvm"
+type rvm | head -1
+
+# remove rake from default and global gems and instead install manually
+rm $rvm_path/gemsets/default.gems
+rm $rvm_path/gemsets/global.gems
+
+echo "Installing various rubies"
+rvm install 1.8.7-p352
+rvm use 1.8.7-p352
+gem install rake --version '0.9.2.2' --no-rdoc --no-ri
+
+rvm install 1.9.2-p180
+rvm --default 1.9.2-p180
+rvm use 1.9.2-p180
+gem install rake --version '0.9.2.2' --no-rdoc --no-ri
+
+echo "Getting vcap"
+[ -d ~/cloudfoundry ] || mkdir ~/cloudfoundry
+cd ~/cloudfoundry
+
+[ -d vcap ] || git clone $VCAP_REPO
+cd vcap
+git submodule update --init
+gem install vmc --no-rdoc --no-ri
+
+echo "Setting up vcap."
+cd ~/cloudfoundry/vcap
+
+sudo setup/vcap_setup
+
+echo "Restarting nginx"
+cd ~/cloudfoundry/vcap
+sudo cp setup/simple.nginx.conf /etc/nginx/nginx.conf
+sudo /etc/init.d/nginx restart
+
+echo "Installing bundler"
+cd ~/cloudfoundry/vcap
+gem install bundler --no-rdoc --no-ri
+rake bundler:install
+
+# don't start up vcap in this shell
+# its best to exit the shell and then
+# come back in so that the .rvmrc in cloudfoundry/vcap activates correctly
+
+echo 'Success!'

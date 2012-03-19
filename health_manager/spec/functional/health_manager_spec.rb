@@ -158,7 +158,7 @@ describe 'Health Manager' do
     {
       :name => app_name,
       :framework => 'sinatra',
-      :runtime => 'ruby19',
+      :runtime => 'ruby192',
       :state => 'STARTED',
       :package_state => 'STAGED'
     }

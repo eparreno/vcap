@@ -42,7 +42,7 @@ module GemfileSupport
   end
 
   def library_version
-    environment[:runtime] == "ruby19" ? "1.9.1" : "1.8"
+    environment[:runtime] == "ruby192" ? "1.9.1" : "1.8"
   end
 
   # Can we expect to run this app on Rack?

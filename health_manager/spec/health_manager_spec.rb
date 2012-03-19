@@ -15,7 +15,7 @@ describe HealthManager do
 
     @app = @user.apps.find_by_name('testapp')
     unless @app
-      @app = ::App.new(:name => "testapp", :owner => @user, :runtime => "ruby19", :framework => "sinatra")
+      @app = ::App.new(:name => "testapp", :owner => @user, :runtime => "ruby192", :framework => "sinatra")
       @app.package_hash = "f49cf6381e322b147053b74e4500af8533ac1e4c"
       @app.staged_package_hash = "4db6cf8d1d9949790c7e836f29f12dc37c15b3a9"
       @app.state = "STARTED"
@@ -32,7 +32,7 @@ describe HealthManager do
         :live_version => "#{@app.staged_package_hash}-#{@app.run_count}",
         :instances => @app.instances,
         :framework => 'sinatra',
-        :runtime => 'ruby19'
+        :runtime => 'ruby192'
     }
     @hm.update_droplet(@app)
   end
@@ -152,7 +152,7 @@ describe HealthManager do
 
     stats[:down].should == 3
     stats[:frameworks]['sinatra'][:missing_instances].should == 3
-    stats[:runtimes]['ruby19'][:missing_instances].should == 3
+    stats[:runtimes]['ruby192'][:missing_instances].should == 3
   end
 
   it "should detect extra instances and send a STOP request" do
@@ -176,7 +176,7 @@ describe HealthManager do
 
     stats[:running].should == 3
     stats[:frameworks]['sinatra'][:running_instances].should == 3
-    stats[:runtimes]['ruby19'][:running_instances].should == 3
+    stats[:runtimes]['ruby192'][:running_instances].should == 3
   end
 
   it "should update its internal state to reflect heartbeat messages" do

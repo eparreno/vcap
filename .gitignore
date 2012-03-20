@@ -12,3 +12,5 @@ ci-working-dir
 *.swp
 .rvmrc
 *.pid
+cloud_controller/config/cloud_controller.yml
+health_manager/config/health_manager.yml

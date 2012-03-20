@@ -5,6 +5,7 @@ VCAP_REPO=${VCAP_REPO:-https://github.com/eparreno/vcap.git}
 
 export rvm_trust_rvmrcs_flag=1 # Trust all rmvrcs we find
 
+OS=`uname -s`
 if [[ $OS != 'Linux' ]]; then
     echo "Unknown System, cancelling setup"
     exit 1

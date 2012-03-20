@@ -88,7 +88,7 @@ gem install vmc --no-rdoc --no-ri
 echo "Setting up vcap."
 cd ~/cloudfoundry/vcap
 
-sudo setup/vcap_setup
+sudo setup/ec2/vcap_setup
 
 echo "Restarting nginx"
 cd ~/cloudfoundry/vcap

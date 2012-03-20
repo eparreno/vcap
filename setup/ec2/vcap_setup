@@ -237,6 +237,7 @@ if [[ $ALL != true ]]; then
         chmod -R 711 "/var/vcap.local"
         chmod -R 711 "/var/vcap.local/apps"
         chmod -R 700 "/var/tmp"
+        chmod 1777 "/tmp"
     fi
 fi
 

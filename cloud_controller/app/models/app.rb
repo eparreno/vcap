@@ -540,13 +540,13 @@ class App < ActiveRecord::Base
     case framework
     when "http://b20nine.com/unknown"
       self.framework = 'sinatra'
-      self.runtime   = 'ruby18'
+      self.runtime   = 'ruby192'
     when "nodejs/1.0"
       self.framework = 'node'
       self.runtime   = 'node'
     when "rails/1.0"
       self.framework = 'rails3'
-      self.runtime   = 'ruby18'
+      self.runtime   = 'ruby192'
     when "java_web/1.0"
       self.framework = 'java_web'
       self.runtime   = 'java'
